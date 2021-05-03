@@ -27,11 +27,11 @@ const Planets = () => {
    console.log('use effect start with', page)
     setLoading(true)
     setError("")
-    let isCancelled = false
+    //let isCancelled = false
     const controller = new AbortController()
     
     fetch(`https://swapi.dev/api/planets/?page=${page}` ,{
-     signal: controller.signal,
+     //signal: controller.signal,
       signal: controlRef.signal,
   })
       .then((response) => {
@@ -68,7 +68,7 @@ const Planets = () => {
       return () => {
         console.log('clean up')
         console.log("i want to cancel")
-        isCancelled = true
+        //isCancelled = true
         controller.abort()
       }
   }, [page]);
