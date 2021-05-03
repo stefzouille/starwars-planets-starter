@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Planet from "./Planet"
 
 const Planets = () => {
@@ -7,6 +7,21 @@ const Planets = () => {
    const [error, setError] = useState("")
    const [page, setPage] = useState(1)
    const [hasNext, setHasNext] = useState(null);
+   const cancelRef = useRef(null)
+   const controlRef = useRef(null)
+
+   useEffect(() => {
+     cancelRef.current = false
+     controlRef.current =new AbortController()
+     //mount
+     console.log('i mounted')
+     return () => {
+    //unmount
+       console.log('i  unmounted')
+       cancelRef.current = true
+     }
+     
+   }, [])
 
  useEffect(() => {
    console.log('use effect start with', page)
@@ -17,6 +32,7 @@ const Planets = () => {
     
     fetch(`https://swapi.dev/api/planets/?page=${page}` ,{
      signal: controller.signal,
+      signal: controlRef.signal,
   })
       .then((response) => {
         console.log("don't forget me here!!!");
@@ -35,7 +51,7 @@ const Planets = () => {
       .then((data) => {
         console.log('i get data')
         console.log(data);
-        if (!isCancelled) {
+        if (!cancelRef.current) {
           console.log("i will update component")
         setPlanets((p) => [...p, ...data.results]);
         setHasNext(data.next)
@@ -44,7 +60,7 @@ const Planets = () => {
       })
       .catch((error) => {
         console.log(error.message)
-        if (!isCancelled) {
+        if (!cancelRef.current) {
         setError(error.message);
         setLoading(false);
         }
