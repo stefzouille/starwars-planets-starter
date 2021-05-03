@@ -14,7 +14,7 @@ const Planets = () => {
     setError("")
     let isCancelled = false
     const controller = new AbortController()
-    //setPage(1)
+    
     fetch(`https://swapi.dev/api/planets/?page=${page}` ,{
      signal: controller.signal,
   })
